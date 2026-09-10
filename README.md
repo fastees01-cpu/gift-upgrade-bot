@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Upgrade</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0b0b12;
+            color: white;
+        }
+
+        .app {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .balance {
+            background: #181824;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-weight: bold;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #252544, #151523);
+            border-radius: 24px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .gift {
+            font-size: 75px;
+            margin: 15px 0;
+        }
+
+        .hero h1 {
+            margin: 5px 0;
+        }
+
+        .hero p {
+            color: #aaa;
+        }
+
+        .buttons {
+            display: grid;
+            gap: 12px;
+        }
+
+        button {
+            border: 0;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background: #6c5ce7;
+            cursor: pointer;
+        }
+
+        button.secondary {
+            background: #20202d;
+        }
+
+        .section {
+            margin-top: 25px;
+        }
+
+        .section h2 {
+            font-size: 20px;
+        }
+
+        .cases {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .case {
+            background: #171720;
+            border-radius: 18px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .case-icon {
+            font-size: 45px;
+        }
+
+        .case-name {
+            margin-top: 8px;
+            font-weight: bold;
+        }
+
+        .price {
+            color: #aaa;
+            margin: 8px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="header">
+        <div class="logo">🎁 Gift Upgrade</div>
+        <div class="balance">⭐ 0</div>
+    </div>
+
+    <div class="hero">
+
+        <div class="gift">🎁</div>
+
+        <h1>Добро пожаловать</h1>
+
+        <p>
+            Кейсы и апгрейд Telegram-подарков
+        </p>
+
+        <div class="buttons">
+
+            <button onclick="openCases()">
+                🎁 Открыть кейсы
+            </button>
+
+            <button class="secondary" onclick="upgrade()">
+                ⬆️ Апгрейд подарка
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="section">
+
+        <h2>🔥 Кейсы</h2>
+
+        <div class="cases">
+
+            <div class="case">
+
+                <div class="case-icon">🎁</div>
+
+                <div class="case-name">
+                    Starter
+                </div>
+
+                <div class="price">
+                    ⭐ 100
+                </div>
+
+                <button onclick="openCase('Starter')">
+                    Открыть
+                </button>
+
+            </div>
+
+            <div class="case">
+
+                <div class="case-icon">💎</div>
+
+                <div class="case-name">
+                    Premium
+                </div>
+
+                <div class="price">
+                    ⭐ 500
+                </div>
+
+                <button onclick="openCase('Premium')">
+                    Открыть
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    const tg = window.Telegram.WebApp;
+
+    tg.ready();
+    tg.expand();
+
+    function openCases() {
+        tg.showAlert("Раздел кейсов");
+    }
+
+    function upgrade() {
+        tg.showAlert("Раздел апгрейда");
+    }
+
+    function openCase(name) {
+        tg.showAlert(
+            "Кейс " + name +
+            "\n\nСейчас подключим реальную оплату и выдачу подарков."
+        );
+    }
+
+</script>
+
+</body>
+</html>
