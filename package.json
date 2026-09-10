@@ -1,0 +1,12 @@
+{
+  "name": "gift-upgrade-bot",
+  "version": "1.0.0",
+  "description": "Telegram Gift Upgrade Mini App backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
