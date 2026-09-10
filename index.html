@@ -147,16 +147,16 @@
         </p>
 
         <div class="buttons">
-
-            <button onclick="openCases()">
-                🎁 Открыть кейсы
-            </button>
-
-            <button class="secondary" onclick="upgrade()">
-                ⬆️ Апгрейд подарка
-            </button>
-
-        </div>
+    <button onclick="deposit()">
+        ⭐ Пополнить 100 Stars
+    </button>
+    <button onclick="openCases()">
+        🎁 Открыть кейсы
+    </button>
+    <button class="secondary" onclick="upgrade()">
+        ⬆️ Апгрейд подарка
+    </button>
+</div>
 
     </div>
 
@@ -272,7 +272,52 @@ async function loadUser() {
 }
 
 loadUser();
-    function openCases() {
+    function openCases() {async function deposit() {
+    try {
+        const response = await fetch(
+            `${API_URL}/api/payment/create`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    initData: tg.initData
+                })
+            }
+        );
+        const data = await response.json();
+        if (!data.success) {
+            tg.showAlert(
+                "Ошибка: " + data.error
+            );
+            return;
+        }
+        tg.openInvoice(
+            data.invoiceLink,
+            function(status) {
+                if (status === "paid") {
+                    tg.showAlert(
+                        "✅ Оплата успешно получена!"
+                    );
+                } else if (status === "cancelled") {
+                    tg.showAlert(
+                        "Оплата отменена"
+                    );
+                } else if (status === "failed") {
+                    tg.showAlert(
+                        "❌ Оплата не прошла"
+                    );
+                }
+            }
+        );
+    } catch (error) {
+        console.error(error);
+        tg.showAlert(
+            "Ошибка соединения с сервером"
+        );
+    }
+}
         tg.showAlert("Раздел кейсов");
     }
 
