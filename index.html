@@ -243,37 +243,9 @@ async function connectBackend() {
 }
 
 connectBackend();
-async function loadUser() {
+async function deposit() {
     try {
-        const response = await fetch(`${API_URL}/api/auth`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                initData: tg.initData
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            document.getElementById("userName").textContent =
-                `👤 ${data.user.first_name}`;
-        } else {
-            document.getElementById("userName").textContent =
-                "Telegram не определён";
-        }
-
-    } catch (error) {
-        document.getElementById("userName").textContent =
-            "Ошибка соединения";
-    }
-}
-
-loadUser();
-    function openCases() {async function deposit() {
-    try {
+        tg.showAlert("Создаём счёт на 100 ⭐...");
         const response = await fetch(
             `${API_URL}/api/payment/create`,
             {
@@ -287,34 +259,36 @@ loadUser();
             }
         );
         const data = await response.json();
+        console.log("Payment response:", data);
         if (!data.success) {
             tg.showAlert(
-                "Ошибка: " + data.error
+                "❌ Ошибка:\n" + (data.error || "Неизвестная ошибка")
             );
+            return;
+        }
+        if (!data.invoiceLink) {
+            tg.showAlert("❌ Telegram invoice не получен");
             return;
         }
         tg.openInvoice(
             data.invoiceLink,
-            function(status) {
+            (status) => {
+                console.log("Invoice status:", status);
                 if (status === "paid") {
-                    tg.showAlert(
-                        "✅ Оплата успешно получена!"
-                    );
+                    tg.showAlert("✅ Оплата успешно получена!");
                 } else if (status === "cancelled") {
-                    tg.showAlert(
-                        "Оплата отменена"
-                    );
+                    tg.showAlert("Оплата отменена");
                 } else if (status === "failed") {
-                    tg.showAlert(
-                        "❌ Оплата не прошла"
-                    );
+                    tg.showAlert("❌ Оплата не прошла");
+                } else {
+                    tg.showAlert("Статус оплаты: " + status);
                 }
             }
         );
     } catch (error) {
-        console.error(error);
+        console.error("Payment error:", error);
         tg.showAlert(
-            "Ошибка соединения с сервером"
+            "❌ Ошибка соединения:\n" + error.message
         );
     }
 }
