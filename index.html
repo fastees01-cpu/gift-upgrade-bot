@@ -207,8 +207,37 @@
 
     const tg = window.Telegram.WebApp;
 
-    tg.ready();
-    tg.expand();
+tg.ready();
+tg.expand();
+
+const API_URL = "https://gift-upgrade-bot.onrender.com";
+
+async function connectBackend() {
+    try {
+        const response = await fetch(`${API_URL}/api/auth`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                initData: tg.initData
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            console.log("Telegram user:", data.user);
+        } else {
+            console.log("Authorization failed:", data.error);
+        }
+
+    } catch (error) {
+        console.error("Backend error:", error);
+    }
+}
+
+connectBackend();
 
     function openCases() {
         tg.showAlert("Раздел кейсов");
