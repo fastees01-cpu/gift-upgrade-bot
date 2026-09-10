@@ -72,6 +72,52 @@ app.post("/api/auth", (req, res) => {
 // =========================
 // TELEGRAM BOT
 // =========================
+// =========================
+// TELEGRAM STARS PAYMENT
+// =========================
+app.post("/api/payment/create", async (req, res) => {
+    try {
+        const initData = req.body?.initData;
+        if (!initData) {
+            return res.status(400).json({
+                success: false,
+                error: "Telegram initData отсутствует"
+            });
+        }
+        const params = new URLSearchParams(initData);
+        const userString = params.get("user");
+        if (!userString) {
+            return res.status(400).json({
+                success: false,
+                error: "Пользователь Telegram не найден"
+            });
+        }
+        const user = JSON.parse(userString);
+        const invoiceLink = await bot.createInvoiceLink(
+            "Gift Upgrade — пополнение",
+            "Пополнение баланса на 100 Telegram Stars",
+            `deposit_${user.id}_${Date.now()}`,
+            "",
+            "XTR",
+            [
+                {
+                    label: "100 ⭐",
+                    amount: 100
+                }
+            ]
+        );
+        res.json({
+            success: true,
+            invoiceLink
+        });
+    } catch (error) {
+        console.error("Payment error:", error);
+        res.status(500).json({
+            success: false,
+            error: "Не удалось создать счёт"
+        });
+    }
+});
 const token = process.env.BOT_TOKEN;
 if (!token) {
     console.error("BOT_TOKEN не найден!");
