@@ -127,7 +127,12 @@
 <div class="app">
 
     <div class="header">
-        <div class="logo">🎁 Gift Upgrade</div>
+        <div class="logo">
+    🎁 Gift Upgrade
+    <div id="userName" style="font-size:13px;color:#aaa;margin-top:4px;">
+        Загрузка...
+    </div>
+</div>
         <div class="balance">⭐ 0</div>
     </div>
 
@@ -238,7 +243,35 @@ async function connectBackend() {
 }
 
 connectBackend();
+async function loadUser() {
+    try {
+        const response = await fetch(`${API_URL}/api/auth`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                initData: tg.initData
+            })
+        });
 
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById("userName").textContent =
+                `👤 ${data.user.first_name}`;
+        } else {
+            document.getElementById("userName").textContent =
+                "Telegram не определён";
+        }
+
+    } catch (error) {
+        document.getElementById("userName").textContent =
+            "Ошибка соединения";
+    }
+}
+
+loadUser();
     function openCases() {
         tg.showAlert("Раздел кейсов");
     }
