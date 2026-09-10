@@ -2,48 +2,47 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0,
+                   maximum-scale=1.0, user-scalable=no">
     <title>Gift Upgrade</title>
-
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
     <style>
         * {
             box-sizing: border-box;
         }
-
         body {
             margin: 0;
             font-family: Arial, sans-serif;
             background: #0b0b12;
             color: white;
         }
-
         .app {
             max-width: 500px;
             margin: auto;
             padding: 20px;
         }
-
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
         }
-
         .logo {
             font-size: 22px;
             font-weight: 800;
         }
-
+        .username {
+            font-size: 13px;
+            color: #aaa;
+            margin-top: 4px;
+        }
         .balance {
             background: #181824;
             padding: 10px 14px;
             border-radius: 14px;
             font-weight: bold;
         }
-
         .hero {
             background: linear-gradient(135deg, #252544, #151523);
             border-radius: 24px;
@@ -51,25 +50,20 @@
             text-align: center;
             margin-bottom: 20px;
         }
-
         .gift {
             font-size: 75px;
             margin: 15px 0;
         }
-
         .hero h1 {
             margin: 5px 0;
         }
-
         .hero p {
             color: #aaa;
         }
-
         .buttons {
             display: grid;
             gap: 12px;
         }
-
         button {
             border: 0;
             border-radius: 16px;
@@ -80,172 +74,142 @@
             background: #6c5ce7;
             cursor: pointer;
         }
-
+        button:active {
+            transform: scale(0.98);
+        }
         button.secondary {
             background: #20202d;
         }
-
+        .deposit {
+            background: #eab308;
+            color: #111;
+        }
         .section {
             margin-top: 25px;
         }
-
         .section h2 {
             font-size: 20px;
         }
-
         .cases {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
         }
-
         .case {
             background: #171720;
             border-radius: 18px;
             padding: 18px;
             text-align: center;
         }
-
         .case-icon {
             font-size: 45px;
         }
-
         .case-name {
             margin-top: 8px;
             font-weight: bold;
         }
-
         .price {
             color: #aaa;
             margin: 8px 0;
         }
     </style>
 </head>
-
 <body>
-
 <div class="app">
-
     <div class="header">
         <div class="logo">
-    🎁 Gift Upgrade
-    <div id="userName" style="font-size:13px;color:#aaa;margin-top:4px;">
-        Загрузка...
+            🎁 Gift Upgrade
+            <div id="userName" class="username">
+                Telegram
+            </div>
+        </div>
+        <div class="balance">
+            ⭐ <span id="balance">0</span>
+        </div>
     </div>
-</div>
-        <div class="balance">⭐ 0</div>
-    </div>
-
     <div class="hero">
-
         <div class="gift">🎁</div>
-
         <h1>Добро пожаловать</h1>
-
         <p>
             Кейсы и апгрейд Telegram-подарков
         </p>
-
         <div class="buttons">
-    <button onclick="deposit()">
-        ⭐ Пополнить 100 Stars
-    </button>
-    <button onclick="openCases()">
-        🎁 Открыть кейсы
-    </button>
-    <button class="secondary" onclick="upgrade()">
-        ⬆️ Апгрейд подарка
-    </button>
-</div>
-
+            <!-- ПОПОЛНЕНИЕ -->
+            <button class="deposit" onclick="deposit()">
+                ⭐ Пополнить 100 Stars
+            </button>
+            <button onclick="openCases()">
+                🎁 Открыть кейсы
+            </button>
+            <button class="secondary" onclick="upgrade()">
+                ⬆️ Апгрейд подарка
+            </button>
+        </div>
     </div>
-
     <div class="section">
-
         <h2>🔥 Кейсы</h2>
-
         <div class="cases">
-
             <div class="case">
-
                 <div class="case-icon">🎁</div>
-
                 <div class="case-name">
                     Starter
                 </div>
-
                 <div class="price">
                     ⭐ 100
                 </div>
-
                 <button onclick="openCase('Starter')">
                     Открыть
                 </button>
-
             </div>
-
             <div class="case">
-
                 <div class="case-icon">💎</div>
-
                 <div class="case-name">
                     Premium
                 </div>
-
                 <div class="price">
                     ⭐ 500
                 </div>
-
                 <button onclick="openCase('Premium')">
                     Открыть
                 </button>
-
             </div>
-
         </div>
-
     </div>
-
 </div>
-
 <script>
-
-    const tg = window.Telegram.WebApp;
-
+const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
-
 const API_URL = "https://gift-upgrade-bot.onrender.com";
-
-async function connectBackend() {
+// =========================
+// TELEGRAM USER
+// =========================
+function showUser() {
     try {
-        const response = await fetch(`${API_URL}/api/auth`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                initData: tg.initData
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            console.log("Telegram user:", data.user);
-        } else {
-            console.log("Authorization failed:", data.error);
+        const user = tg.initDataUnsafe?.user;
+        if (user) {
+            document.getElementById("userName").textContent =
+                "👤 " + (user.first_name || "Пользователь");
         }
-
     } catch (error) {
-        console.error("Backend error:", error);
+        console.log(error);
     }
 }
-
-connectBackend();
+showUser();
+// =========================
+// ПОПОЛНЕНИЕ STARS
+// =========================
 async function deposit() {
     try {
-        tg.showAlert("Создаём счёт на 100 ⭐...");
+        if (!tg.initData) {
+            tg.showAlert(
+                "❌ Открой приложение через Telegram"
+            );
+            return;
+        }
+        tg.showAlert(
+            "⏳ Создаём счёт..."
+        );
         const response = await fetch(
             `${API_URL}/api/payment/create`,
             {
@@ -259,54 +223,84 @@ async function deposit() {
             }
         );
         const data = await response.json();
-        console.log("Payment response:", data);
+        console.log("Payment:", data);
         if (!data.success) {
             tg.showAlert(
-                "❌ Ошибка:\n" + (data.error || "Неизвестная ошибка")
+                "❌ " +
+                (data.error || "Ошибка создания счёта")
             );
             return;
         }
         if (!data.invoiceLink) {
-            tg.showAlert("❌ Telegram invoice не получен");
+            tg.showAlert(
+                "❌ Invoice не получен"
+            );
             return;
         }
         tg.openInvoice(
             data.invoiceLink,
-            (status) => {
-                console.log("Invoice status:", status);
+            function(status) {
+                console.log(
+                    "Invoice status:",
+                    status
+                );
                 if (status === "paid") {
-                    tg.showAlert("✅ Оплата успешно получена!");
-                } else if (status === "cancelled") {
-                    tg.showAlert("Оплата отменена");
-                } else if (status === "failed") {
-                    tg.showAlert("❌ Оплата не прошла");
-                } else {
-                    tg.showAlert("Статус оплаты: " + status);
+                    document.getElementById("balance")
+                        .textContent = "100";
+                    tg.showAlert(
+                        "✅ Оплата получена!\n\n⭐ 100 Stars"
+                    );
+                }
+                else if (status === "cancelled") {
+                    tg.showAlert(
+                        "Оплата отменена"
+                    );
+                }
+                else if (status === "failed") {
+                    tg.showAlert(
+                        "❌ Оплата не прошла"
+                    );
                 }
             }
         );
-    } catch (error) {
-        console.error("Payment error:", error);
+    }
+    catch (error) {
+        console.error(
+            "Payment error:",
+            error
+        );
         tg.showAlert(
-            "❌ Ошибка соединения:\n" + error.message
+            "❌ Ошибка соединения с сервером"
         );
     }
 }
-        tg.showAlert("Раздел кейсов");
-    }
-
-    function upgrade() {
-        tg.showAlert("Раздел апгрейда");
-    }
-
-    function openCase(name) {
-        tg.showAlert(
-            "Кейс " + name +
-            "\n\nСейчас подключим реальную оплату и выдачу подарков."
-        );
-    }
-
+// =========================
+// КЕЙСЫ
+// =========================
+function openCases() {
+    tg.showAlert(
+        "🎁 Раздел кейсов\n\nСкоро здесь будут доступны кейсы."
+    );
+}
+// =========================
+// АПГРЕЙД
+// =========================
+function upgrade() {
+    tg.showAlert(
+        "⬆️ Апгрейд подарка\n\nФункция будет подключена следующим этапом."
+    );
+}
+// =========================
+// ОТКРЫТИЕ КЕЙСА
+// =========================
+function openCase(name) {
+    tg.showAlert(
+        "🎁 Кейс: " + name +
+        "\n\n⭐ Стоимость: " +
+        (name === "Starter" ? "100" : "500") +
+        "\n\nФункция оплаты будет подключена следующим этапом."
+    );
+}
 </script>
-
 </body>
 </html>
